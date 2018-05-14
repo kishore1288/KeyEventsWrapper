@@ -1,33 +1,55 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import KeyeventsWrapper from '../__tests__/KeyeventsWrapper'
+import KeyeventsWrapper from '../KeyeventsWrapper'
 
 const props = {
   keydirection: 'VERTICAL',
+  keyelement: 'a,button',
 }
 
 describe('<KeyeventsWrapper />', () => {
-  const wrapper = mount(<KeyeventsWrapper {...props} />)
-  it('should render DOWN_ARROW and UP_ARROW if keydirection vertical is selected', () => {
+  const wrapper = mount(
+    <KeyeventsWrapper {...props}>
+      <div>
+        <a
+          onClick={event => {
+            event.target.focus()
+          }}
+          href="test.com"
+        >
+          one
+        </a>
+        <button>two</button>
+        <a href="test.com">three</a>
+        <a href="test.com">four</a>
+        <a href="test.com">five</a>
+      </div>
+    </KeyeventsWrapper>
+  )
+
+  it('navigate down by keypress', () => {
     wrapper
       .find('a')
       .at(0)
       .simulate('click')
-    wrapper.update()
-    wrapper
-      .instance()
-      .handleChange({ key: 'ArrowDown', preventDefault: () => {} })
-    wrapper.update()
-    expect(document.activeElement.innerHTML).toBe('test2')
+    wrapper.instance().handleChange({ keyCode: 40, preventDefault: () => {} })
+    expect(document.activeElement.innerHTML).toBe('two')
   })
-  it('should render DOWN_ARROW and UP_ARROW if keydirection vertical is selected', () => {
-    wrapper
-      .find('a')
-      .at(1)
-      .simulate('click')
-    wrapper
-      .instance()
-      .handleChange({ key: 'ArrowUp', preventDefault: () => {} })
-    expect(document.activeElement.innerHTML).toBe('test1')
+
+  it('navigate up by keypress', () => {
+    wrapper.instance().handleChange({ keyCode: 38, preventDefault: () => {} })
+    expect(document.activeElement.innerHTML).toBe('one')
+  })
+
+  it('navigate left by keypress', () => {
+    wrapper.setProps({ keydirection: 'HORIZANTAL' })
+    wrapper.instance().handleChange({ keyCode: 37, preventDefault: () => {} })
+    expect(document.activeElement.innerHTML).toBe('five')
+  })
+
+  it('navigate right by keypress', () => {
+    wrapper.setProps({ keydirection: 'HORIZANTAL' })
+    wrapper.instance().handleChange({ keyCode: 39, preventDefault: () => {} })
+    expect(document.activeElement.innerHTML).toBe('one')
   })
 })

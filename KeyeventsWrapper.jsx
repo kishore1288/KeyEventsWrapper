@@ -23,7 +23,8 @@ class KeyeventsWrapper extends React.Component {
     this.setFocus = this.setFocus.bind(this)
   }
 
-  getWrapperElement = () => this.wrapper.querySelectorAll(this.props.keyelement)
+  getWrapperElement = () =>
+    (this.wrapper && this.wrapper.querySelectorAll(this.props.keyelement)) || []
 
   handleChange = event => {
     const { keydirection } = this.props
@@ -95,8 +96,10 @@ class KeyeventsWrapper extends React.Component {
     const { focusedIndex, setFocusRing } = this.state
     if (setFocusRing) {
       const selectedListItem = this.getWrapperElement()[focusedIndex]
-      selectedListItem.classList.add('focus-ring')
-      selectedListItem.focus()
+      if (selectedListItem) {
+        selectedListItem.classList.add('focus-ring')
+        selectedListItem.focus()
+      }
     }
   }
 
